@@ -1,0 +1,367 @@
+openapi: 3.0.0
+info:
+    title: Task Management API
+    description: |
+        API for managing tasks with SQLite database
+
+        **Author:** Dotch3 (dotch3@gmail.com)
+
+        **Purpose:** Created for testing and educational purposes only
+
+        **Inspired by:** Playwright Express course by Fernando Papito
+
+        **Note:** This is a demonstration project showcasing RESTful API design with TypeScript and Express, 
+        created as part of learning test automation with Playwright.
+
+         **Configuration:** The server URL is dynamically set based on the PORT environment variable (default: 3000).
+    version: 1.0.0
+    contact:
+        name: Dotch3
+        email: dotch3@gmail.com
+    license:
+        name: MIT
+        url: https://opensource.org/licenses/MIT
+
+servers:
+    - url: http://localhost:3000
+      description: Development server
+
+paths:
+    /api/tasks:
+        get:
+            summary: Get all tasks
+            tags:
+                - Tasks
+            responses:
+                "200":
+                    description: List of all tasks
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Task"
+                "500":
+                    description: Server error
+
+        post:
+            summary: Create a new task
+            description: Creates a new task. Task names must be unique (case-insensitive).
+            tags:
+                - Tasks
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateTaskRequest"
+                        example:
+                            name: "Buy groceries"
+            responses:
+                "201":
+                    description: Task created successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CreateTaskResponse"
+                            example:
+                                message: "Task created successfully"
+                                id: "550e8400-e29b-41d4-a716-446655440000"
+                                name: "Buy groceries"
+                "400":
+                    description: Invalid input (missing name or exceeds 250 characters)
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "409":
+                    description: Conflict - A task with this name already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                            example:
+                                error: "A task with this name already exists"
+                "500":
+                    description: Server error
+
+    /api/tasks/reset:
+        post:
+            summary: Reset database to default state
+            description: Deletes all tasks and restores the 3 default tasks
+            tags:
+                - Admin
+            responses:
+                "200":
+                    description: Database reset successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        example: "Database has been reset to default state"
+                                    tasksCount:
+                                        type: integer
+                                        example: 3
+                "500":
+                    description: Server error
+
+    /api/tasks/{id}:
+        get:
+            summary: Get task by ID
+            tags:
+                - Tasks
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Task found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Task"
+                "404":
+                    description: Task not found
+                "500":
+                    description: Server error
+
+        put:
+            summary: Edit task name
+            description: |
+                Updates the task name. 
+
+                **Constraints:**
+                - Task names must be unique (case-insensitive)
+                - Cannot edit a task that is marked as DONE (is_done: true)
+            tags:
+                - Tasks
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/EditTaskRequest"
+                        example:
+                            name: "Updated task name"
+            responses:
+                "200":
+                    description: Task updated successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UpdateTaskResponse"
+                            example:
+                                message: "Task updated successfully"
+                                id: "550e8400-e29b-41d4-a716-446655440000"
+                                name: "Updated task name"
+                "400":
+                    description: Invalid input
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                "404":
+                    description: Task not found
+                "409":
+                    description: Conflict - A task with this name already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                            example:
+                                error: "A task with this name already exists"
+                "422":
+                    description: Unprocessable Entity - Cannot edit a task marked as DONE
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                            example:
+                                error: "Cannot edit a task that is marked as DONE"
+                "500":
+                    description: Server error
+
+        delete:
+            summary: Delete task
+            tags:
+                - Tasks
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Task deleted successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DeleteTaskResponse"
+                            example:
+                                message: "Task deleted successfully"
+                                id: "550e8400-e29b-41d4-a716-446655440000"
+                                name: "Buy groceries"
+                "404":
+                    description: Task not found
+                "500":
+                    description: Server error
+
+    /api/tasks/{id}/complete:
+        patch:
+            summary: Mark task as complete
+            tags:
+                - Tasks
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Task marked as complete
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CompleteTaskResponse"
+                            example:
+                                message: "Task marked as DONE"
+                                id: "550e8400-e29b-41d4-a716-446655440000"
+                                name: "Buy groceries"
+                                status: "DONE"
+                "404":
+                    description: Task not found
+                "500":
+                    description: Server error
+
+components:
+    schemas:
+        Task:
+            type: object
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                    description: Unique identifier for the task
+                name:
+                    type: string
+                    maxLength: 250
+                    description: Task name (must be unique, case-insensitive)
+                is_done:
+                    type: boolean
+                    description: Task completion status
+                created_date:
+                    type: string
+                    format: date-time
+                    description: Task creation timestamp
+                updated_time:
+                    type: string
+                    format: date-time
+                    description: Last update timestamp
+            required:
+                - id
+                - name
+                - is_done
+                - created_date
+                - updated_time
+            example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                name: "to make a good coffee"
+                is_done: false
+                created_date: "2024-01-15T10:30:00.000Z"
+                updated_time: "2024-01-15T10:30:00.000Z"
+
+        CreateTaskRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    maxLength: 250
+                    description: Task name (must be unique)
+            required:
+                - name
+
+        EditTaskRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    maxLength: 250
+                    description: New task name (must be unique)
+            required:
+                - name
+
+        CreateTaskResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: "Task created successfully"
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+
+        UpdateTaskResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: "Task updated successfully"
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+
+        CompleteTaskResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: "Task marked as DONE"
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                status:
+                    type: string
+                    example: "DONE"
+
+        DeleteTaskResponse:
+            type: object
+            properties:
+                message:
+                    type: string
+                    example: "Task deleted successfully"
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+
+        Error:
+            type: object
+            properties:
+                error:
+                    type: string
+                    description: Error message
