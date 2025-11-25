@@ -203,15 +203,13 @@ yarn start
 
 **Note:** The port shown (3000) is an example. Your actual port will match the value in your `.env` file.
 
-````
-
 ## API Endpoints
 
 ### Health Check
 
 ```http
 GET /health
-````
+```
 
 Returns API status and information.
 
