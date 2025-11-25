@@ -1,6 +1,6 @@
 # Task Manager - Full Stack Application
 
-> **Note:** This project was created for testing and educational purposes, specifically for practicing Playwright test automation.
+> **Note:** This project was created for testing and educational purposes, specifically for practicing test automation.
 
 A complete task management application with RESTful API and modern web interface, designed as a test automation practice project.
 
