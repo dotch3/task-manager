@@ -86,11 +86,11 @@ const TaskManager = () => {
 
     if (isLoading) {
         return (
-            <div className='container'>
-                <div className='header'>
-                    <h1>📝 Task Manager</h1>
-                    <p>Loading tasks...</p>
-                    <ApiStatus />
+            <div className='container' data-id='loadingContainer'>
+                <div className='header' data-id='loadingHeader'>
+                    <h1 data-id='loadingTitle'>📝 Task Manager</h1>
+                    <p data-id='loadingMessage'>Loading tasks...</p>
+                    <ApiStatus data-id='loadingApiStatus' />
                 </div>
             </div>
         )
@@ -98,16 +98,16 @@ const TaskManager = () => {
 
     if (isError) {
         return (
-            <div className='container'>
-                <div className='header'>
-                    <h1>📝 Task Manager</h1>
-                    <ApiStatus />
+            <div className='container' data-id='errorContainer'>
+                <div className='header' data-id='errorHeader'>
+                    <h1 data-id='errorTitle'>📝 Task Manager</h1>
+                    <ApiStatus data-id='errorApiStatus' />
                 </div>
-                <div className='error-banner'>
-                    <strong>Failed to load tasks</strong>
-                    <p>Please make sure the API is running on http://localhost:3000</p>
-                    <p style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
-                        Start the API with: <code>cd apps/api && npm run dev</code>
+                <div className='error-banner' data-id='errorBanner'>
+                    <strong data-id='errorTitleText'>Failed to load tasks</strong>
+                    <p data-id='errorHint'>Please make sure the API is running on http://localhost:3000</p>
+                    <p data-id='errorInstruction' style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>
+                        Start the API with: <code data-id='errorCode'>cd apps/api && npm run dev</code>
                     </p>
                 </div>
             </div>
@@ -115,17 +115,18 @@ const TaskManager = () => {
     }
 
     return (
-        <div className='container'>
-            <div className='header'>
-                <h1>📝 Task Manager</h1>
-                <p>Organize your tasks efficiently</p>
-                <ApiStatus />
+        <div className='container' data-id='taskManager'>
+            <div className='header' data-id='header'>
+                <h1 data-id='appTitle'>📝 Task Manager</h1>
+                <p data-id='appSubtitle'>Organize your tasks efficiently</p>
+                <ApiStatus data-id='apiStatus' />
             </div>
 
-            <StatsCards stats={stats} />
+            <StatsCards data-id='statsCards' stats={stats} />
 
-            <div className='card'>
+            <div className='card' data-id='taskCard'>
                 <TaskForm
+                    data-id='taskForm'
                     newTaskName={newTaskName}
                     setNewTaskName={setNewTaskName}
                     onSubmit={handleCreateTask}
@@ -133,11 +134,12 @@ const TaskManager = () => {
                     error={error}
                 />
 
-                <TaskList tasks={tasks} />
+                <TaskList data-id='taskList' tasks={tasks} />
 
                 <div style={{ padding: "1.5rem", paddingTop: 0 }}>
                     <button
                         className='btn btn-reset'
+                        data-id='resetBtn'
                         onClick={handleResetClick}
                         disabled={resetDatabaseMutation.isPending}
                         title='Reset database to default 3 tasks'

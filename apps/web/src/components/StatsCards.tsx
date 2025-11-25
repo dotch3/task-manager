@@ -6,18 +6,20 @@ interface StatsCardsProps {
 
 const StatsCards = ({ stats }: StatsCardsProps) => {
     return (
-        <div className='stats'>
-            <div className='stat-card total'>
-                <h3>Total Tasks</h3>
-                <p>{stats.total}</p>
+        <div className='stats' data-id='statsContainer'>
+            <div className='stat-card total' data-id='totalCard'>
+                <h3 data-id='totalTitle'>Total Tasks</h3>
+                <p data-id='totalCount'>{stats.total}</p>
             </div>
-            <div className='stat-card completed'>
-                <h3>Completed</h3>
-                <p>{stats.completed}</p>
+
+            <div className='stat-card completed' data-id='completedCard'>
+                <h3 data-id='completedTitle'>Completed</h3>
+                <p data-id='completedCount'>{stats.completed}</p>
             </div>
-            <div className='stat-card pending'>
-                <h3>Pending</h3>
-                <p>{stats.pending}</p>
+
+            <div className='stat-card pending' data-id='pendingCard'>
+                <h3 data-id='pendingTitle'>Pending</h3>
+                <p data-id='pendingCount'>{stats.pending}</p>
             </div>
         </div>
     )

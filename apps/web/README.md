@@ -488,7 +488,7 @@ _Inspired by Playwright Express course by Fernando Papito_
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
+git clone https://github.com/dotch3/task-manager
 cd task-manager
 
 # 2. Start the API

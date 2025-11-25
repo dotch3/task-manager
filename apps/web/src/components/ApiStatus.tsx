@@ -17,9 +17,14 @@ const ApiStatus = () => {
     const isConnected = !isError && data
 
     return (
-        <div className='connection-status'>
-            <div className={`status-dot ${isConnected ? "connected" : "disconnected"}`}></div>
-            <span>{isConnected ? `API Connected (Port: ${data?.port})` : "API Disconnected"}</span>
+        <div className='connection-status' data-id='apiStatusContainer'>
+            <div
+                className={`status-dot ${isConnected ? "connected" : "disconnected"}`}
+                data-id={isConnected ? "apiConnected" : "apiDisconnected"}
+            ></div>
+            <span data-id='apiStatusMessage'>
+                {isConnected ? `API Connected (Port: ${data?.port})` : "API Disconnected"}
+            </span>
         </div>
     )
 }

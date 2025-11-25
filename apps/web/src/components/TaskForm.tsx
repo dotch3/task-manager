@@ -12,7 +12,7 @@ const TaskForm = ({ newTaskName, setNewTaskName, onSubmit, isLoading, error }: T
     return (
         <div className='create-task-form'>
             <h2>Create New Task</h2>
-            <form onSubmit={onSubmit} className='form-group'>
+            <form onSubmit={onSubmit} className='form-group' data-id='createTaskForm'>
                 <input
                     type='text'
                     className='form-input'
@@ -22,12 +22,14 @@ const TaskForm = ({ newTaskName, setNewTaskName, onSubmit, isLoading, error }: T
                     maxLength={250}
                     disabled={isLoading}
                     title='Enter a unique task name (max 250 characters)'
+                    data-id='taskInput'
                 />
                 <button
                     type='submit'
                     className='btn btn-primary'
                     disabled={isLoading || !newTaskName.trim()}
                     title={!newTaskName.trim() ? "Enter a task name first" : "Add new task"}
+                    data-id='addTaskBtn'
                 >
                     <Plus size={20} />
                     {isLoading ? "Adding..." : "Add Task"}

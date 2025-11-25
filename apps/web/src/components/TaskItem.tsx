@@ -14,7 +14,6 @@ const TaskItem = ({ task }: TaskItemProps) => {
     const queryClient = useQueryClient()
     const [isEditing, setIsEditing] = useState(false)
     const [editName, setEditName] = useState(task.name)
-    const [error, setError] = useState<string | null>(null)
 
     // Dialog states
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -36,11 +35,9 @@ const TaskItem = ({ task }: TaskItemProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
             setIsEditing(false)
-            setError(null)
         },
         onError: (error: ApiError) => {
             const message = error.response?.data?.error || "Failed to update task"
-            setError(message)
             setErrorMessage(message)
             setShowErrorDialog(true)
         },
@@ -67,7 +64,6 @@ const TaskItem = ({ task }: TaskItemProps) => {
         }
         setIsEditing(true)
         setEditName(task.name)
-        setError(null)
     }
 
     const handleSave = () => {
@@ -75,14 +71,12 @@ const TaskItem = ({ task }: TaskItemProps) => {
             updateMutation.mutate(editName.trim())
         } else {
             setIsEditing(false)
-            setError(null)
         }
     }
 
     const handleCancel = () => {
         setIsEditing(false)
         setEditName(task.name)
-        setError(null)
     }
 
     const handleDeleteClick = () => {
@@ -106,17 +100,18 @@ const TaskItem = ({ task }: TaskItemProps) => {
 
     return (
         <>
-            <div className={`task-item ${task.is_done ? "completed" : ""}`}>
+            <div className={`task-item ${task.is_done ? "completed" : ""}`} data-id={`taskItem-${task.id}`}>
                 <div
                     className={`task-checkbox ${task.is_done ? "checked" : ""}`}
                     onClick={handleComplete}
                     style={{ cursor: task.is_done ? "default" : "pointer" }}
                     title={task.is_done ? "Task completed" : "Mark as complete"}
+                    data-id={`completeBtn-${task.id}`}
                 >
                     {task.is_done && <Check size={16} color='white' strokeWidth={3} />}
                 </div>
 
-                <div className='task-content'>
+                <div className='task-content' data-id={`taskContent-${task.id}`}>
                     {isEditing ? (
                         <>
                             <input
@@ -128,21 +123,22 @@ const TaskItem = ({ task }: TaskItemProps) => {
                                 autoFocus
                                 placeholder='Enter task name...'
                                 title='Task name (max 250 characters)'
+                                data-id={`editInput-${task.id}`}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") handleSave()
                                     if (e.key === "Escape") handleCancel()
                                 }}
                             />
-                            {error && (
-                                <div style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "0.25rem" }}>
-                                    {error}
-                                </div>
-                            )}
                         </>
                     ) : (
                         <>
-                            <div className={`task-name ${task.is_done ? "completed" : ""}`}>{task.name}</div>
-                            <div className='task-date'>
+                            <div
+                                className={`task-name ${task.is_done ? "completed" : ""}`}
+                                data-id={`taskName-${task.id}`}
+                            >
+                                {task.name}
+                            </div>
+                            <div className='task-date' data-id={`taskDate-${task.id}`}>
                                 Created: {formatDate(task.created_date)}
                                 {task.updated_time !== task.created_date &&
                                     ` • Updated: ${formatDate(task.updated_time)}`}
@@ -151,7 +147,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
                     )}
                 </div>
 
-                <div className='task-actions'>
+                <div className='task-actions' data-id={`taskActions-${task.id}`}>
                     {isEditing ? (
                         <>
                             <button
@@ -159,6 +155,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
                                 onClick={handleSave}
                                 disabled={updateMutation.isPending}
                                 title='Save changes (Enter)'
+                                data-id={`saveBtn-${task.id}`}
                             >
                                 <Save size={18} />
                             </button>
@@ -167,6 +164,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
                                 onClick={handleCancel}
                                 disabled={updateMutation.isPending}
                                 title='Cancel editing (Esc)'
+                                data-id={`cancelBtn-${task.id}`}
                             >
                                 <X size={18} />
                             </button>
@@ -178,6 +176,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
                                 onClick={handleEdit}
                                 disabled={task.is_done}
                                 title={task.is_done ? "Cannot edit completed task" : "Edit task"}
+                                data-id={`editBtn-${task.id}`}
                                 style={{ opacity: task.is_done ? 0.5 : 1 }}
                             >
                                 <Edit2 size={18} />
@@ -187,6 +186,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
                                 onClick={handleDeleteClick}
                                 disabled={deleteMutation.isPending}
                                 title='Delete task'
+                                data-id={`deleteBtn-${task.id}`}
                             >
                                 <Trash2 size={18} />
                             </button>

@@ -44,31 +44,43 @@ const Dialog = ({
     }
 
     return (
-        <div className='dialog-overlay' onClick={onClose}>
-            <div className='dialog' onClick={(e) => e.stopPropagation()}>
-                <div className='dialog-header'>
-                    <h3 className={`dialog-title ${type}`}>{title}</h3>
-                    <button className='dialog-close' onClick={onClose}>
+        <div className='dialog-overlay' onClick={onClose} data-id='dialogOverlay'>
+            <div className='dialog' onClick={(e) => e.stopPropagation()} data-id={`dialog-${type}`}>
+                <div className='dialog-header' data-id='dialogHeader'>
+                    <h3 className={`dialog-title ${type}`} data-id='dialogTitle'>
+                        {title}
+                    </h3>
+                    <button className='dialog-close' onClick={onClose} data-id='dialogCloseBtn' title='Close dialog'>
                         <X size={20} />
                     </button>
                 </div>
 
-                <div className='dialog-body'>
-                    <p>{message}</p>
+                <div className='dialog-body' data-id='dialogBody'>
+                    <p data-id='dialogMessage'>{message}</p>
                 </div>
 
-                <div className='dialog-footer'>
+                <div className='dialog-footer' data-id='dialogFooter'>
                     {type === "confirm" ? (
                         <>
-                            <button className='btn btn-secondary' onClick={onClose}>
+                            <button
+                                className='btn btn-secondary'
+                                onClick={onClose}
+                                data-id='dialogCancelBtn'
+                                title='Cancel'
+                            >
                                 {cancelText}
                             </button>
-                            <button className='btn btn-danger' onClick={handleConfirm}>
+                            <button
+                                className='btn btn-danger'
+                                onClick={handleConfirm}
+                                data-id='dialogConfirmBtn'
+                                title='Confirm action'
+                            >
                                 {confirmText}
                             </button>
                         </>
                     ) : (
-                        <button className='btn btn-primary' onClick={onClose}>
+                        <button className='btn btn-primary' onClick={onClose} data-id='dialogOkBtn' title='OK'>
                             {confirmText}
                         </button>
                     )}
